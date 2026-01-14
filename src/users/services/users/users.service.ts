@@ -1,10 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../../Typeorm/entities/User';
 import { Repository } from 'typeorm';
-import { CreateUserParams, CreateUserProfileParams, UpdateUserParams } from 'src/utils/types';
-import { UpdateUserDto } from '../../dtos/UpdateUser.dto';
+import { User } from '../../../Typeorm/entities/User';
 import { Profile } from 'src/Typeorm/entities/Profile';
+import { Post } from 'src/Typeorm/entities/Post';
+import { 
+    CreateUserParams, 
+    CreateUserProfileParams, 
+    UpdateUserParams, 
+    CreateUserPostParams 
+} from 'src/utils/types';
 
 @Injectable()
 export class UsersService {
@@ -14,22 +19,26 @@ export class UsersService {
 
         @InjectRepository(Profile)
         private profileRepository: Repository<Profile>,
-    ) { }
 
+        @InjectRepository(Post)
+        private postRepository: Repository<Post>,
+    ) {}
+
+    // Best Practice: Ku dar relations si xogta oo dhan ay u soo baxdo
     findUsers() {
-        return this.userRepository.find();
+        return this.userRepository.find({ relations: ['profile', 'posts'] });
     }
 
-    createUser(UserDetails: CreateUserParams) {
+    createUser(userDetails: CreateUserParams) {
         const newUser = this.userRepository.create({
-            ...UserDetails,
+            ...userDetails,
             createdAt: new Date(),
         });
         return this.userRepository.save(newUser);
     }
 
-    UpdateUser(id: number, UpdateUserDetails: UpdateUserParams) {
-        return this.userRepository.update({ id }, { ...UpdateUserDetails });
+    updateUser(id: number, updateUserDetails: UpdateUserParams) {
+        return this.userRepository.update({ id }, { ...updateUserDetails });
     }
 
     deleteUser(id: number) {
@@ -38,7 +47,7 @@ export class UsersService {
 
     async createUserProfile(
         id: number,
-        createUserProfileDetailes: CreateUserProfileParams,
+        createUserProfileDetails: CreateUserProfileParams,
     ) {
         const user = await this.userRepository.findOne({
             where: { id },
@@ -52,9 +61,31 @@ export class UsersService {
             );
         }
 
-        const newProfile = this.profileRepository.create(createUserProfileDetailes);
-        newProfile.user = user;
+        const newProfile = this.profileRepository.create(createUserProfileDetails);
+        const savedProfile = await this.profileRepository.save(newProfile);
 
-        return this.profileRepository.save(newProfile);
+        user.profile = savedProfile;
+        return this.userRepository.save(user);
+    }
+
+    async createUserPost(
+        id: number,
+        createUserPostDetails: CreateUserPostParams,
+    ) {
+        const user = await this.userRepository.findOneBy({ id });
+
+        if (!user) {
+            throw new HttpException(
+                'User not found. Cannot create Post',
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+
+        const newPost = this.postRepository.create({
+            ...createUserPostDetails,
+            user, // Waxay ku xidhaysaa post-ka user-ka (Foreign Key)
+        });
+
+        return this.postRepository.save(newPost);
     }
 }

@@ -1,45 +1,61 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { 
+    Body, 
+    Controller, 
+    Delete, 
+    Get, 
+    Param, 
+    ParseIntPipe, 
+    Post, 
+    Put 
+} from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dtos/CreateUser.dto';
 import { UsersService } from '../../services/users/users.service';
 import { UpdateUserDto } from '../../dtos/UpdateUser.dto';
 import { CreateUserProfileDto } from '../../dtos/CreateUserProfile';
+import { CreateUserPostDto } from 'src/users/dtos/CreateUserPost.dto';
 
 @Controller('users')
 export class UsersController {
-    // Sidan ayuu noqonayaa constructor-ka saxda ah:
-    constructor(private readonly UserService: UsersService) { }
+    // Best Practice: Isticmaal camelCase 'userService'
+    constructor(private readonly userService: UsersService) { }
 
     @Get()
-    getUsers() {
-        // Halkan waxaad uga wici kartaa findUsers()
-        return this.UserService.findUsers();
+    async getUsers() {
+        return await this.userService.findUsers();
     }
 
     @Post()
-    createUser(@Body() CreateUserDto: CreateUserDto) {
-        // Waxay u gudbinaysaa xogta Service-ka
-        return this.UserService.createUser(CreateUserDto);
+    async createUser(@Body() createUserDto: CreateUserDto) {
+        return await this.userService.createUser(createUserDto);
     }
 
     @Put(':id')
     async updateUserById(
         @Param('id', ParseIntPipe) id: number,
-        @Body() UpdateUserDto: UpdateUserDto,
+        @Body() updateUserDto: UpdateUserDto,
     ) {
-        await this.UserService.UpdateUser(id, UpdateUserDto);
+        // Waxaa muhiim ah in 'return' la dhaho si loo arko natiijada
+        return await this.userService.updateUser(id, updateUserDto);
     }
 
     @Delete(':id')
     async deleteUserById(@Param('id', ParseIntPipe) id: number) {
-        await this.UserService.deleteUser(id);
+        return await this.userService.deleteUser(id);
     }
 
     @Post(':id/profiles')
-    CreateUserProfile(
+    async createUserProfile(
         @Param('id', ParseIntPipe) id: number,
-        @Body() CreateUserProfileDto: CreateUserProfileDto,
+        @Body() createUserProfileDto: CreateUserProfileDto,
     ) {
-        return this.UserService.createUserProfile(id, CreateUserProfileDto);
+        return await this.userService.createUserProfile(id, createUserProfileDto);
     }
 
+    @Post(':id/posts')
+    async createUserPost(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() createUserPostDto: CreateUserPostDto,
+    ) { 
+        return await this.userService.createUserPost(id, createUserPostDto);
+    }
 }

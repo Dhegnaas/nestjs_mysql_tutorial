@@ -15,3 +15,9 @@ export type CreateUserProfileParams = {
     age: number;
     dob: string;
 }
+
+export type CreateUserPostParams = {
+    title: string;
+    description: string;
+    // Ku dar halkan wixii kale ee Post-kaagu leeyahay
+}
