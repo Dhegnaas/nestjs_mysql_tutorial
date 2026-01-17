@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, MinLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, MinLength, IsOptional } from 'class-validator';
 
 export class CreateBookDto {
   @IsString()
@@ -12,4 +12,8 @@ export class CreateBookDto {
 
   @IsNumber()
   price: number;
+
+  @IsNumber()
+  @IsOptional() // Hadii aadan rarin Category mar walba, ka tag optional
+  categoryId: number; 
 }

@@ -13,16 +13,21 @@ export class BookService {
   ) {}
 
   create(createBookDto: CreateBookDto) {
-    const newBook = this.bookRepository.create(createBookDto);
+    const newBook = this.bookRepository.create({
+        title: createBookDto.title,
+        author: createBookDto.author,
+        price: createBookDto.price,
+        category: { id: createBookDto.categoryId } 
+    });
     return this.bookRepository.save(newBook);
   }
 
   findAll() {
-    return this.bookRepository.find();
+    return this.bookRepository.find({ relations: ['category'] });
   }
 
   async findOne(id: number) {
-    const book = await this.bookRepository.findOneBy({ id });
+    const book = await this.bookRepository.findOne({ where: { id }, relations: ['category'] });
     if (!book) throw new NotFoundException(`Buugga leh ID #${id} lama helin`);
     return book;
   }

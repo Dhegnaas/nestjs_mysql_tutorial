@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Category } from '../../categories/entities/category.entity';
 
-@Entity({ name: 'books' }) // Magaca table-ka ee database-ka
+@Entity({ name: 'books' })
 export class Book {
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,4 +17,8 @@ export class Book {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  // Xiriirka Category-ga (Many Books to One Category)
+  @ManyToOne(() => Category, (category) => category.books)
+  category: Category; 
 }
