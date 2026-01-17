@@ -6,6 +6,7 @@ import { User } from './Typeorm/entities/User';
 import { UsersModule } from './users/users.module';
 import { Profile } from './Typeorm/entities/Profile';
 import { Post } from './Typeorm/entities/Post';
+import { BookModule } from './book/book.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { Post } from './Typeorm/entities/Post';
       synchronize: true,
     }),
     UsersModule,
+    BookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
