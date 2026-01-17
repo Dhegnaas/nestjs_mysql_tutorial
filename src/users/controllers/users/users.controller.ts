@@ -16,7 +16,6 @@ import { CreateUserPostDto } from 'src/users/dtos/CreateUserPost.dto';
 
 @Controller('users')
 export class UsersController {
-    // Best Practice: Isticmaal camelCase 'userService'
     constructor(private readonly userService: UsersService) { }
 
     @Get()
@@ -34,7 +33,6 @@ export class UsersController {
         @Param('id', ParseIntPipe) id: number,
         @Body() updateUserDto: UpdateUserDto,
     ) {
-        // Waxaa muhiim ah in 'return' la dhaho si loo arko natiijada
         return await this.userService.updateUser(id, updateUserDto);
     }
 

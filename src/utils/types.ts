@@ -19,5 +19,4 @@ export type CreateUserProfileParams = {
 export type CreateUserPostParams = {
     title: string;
     description: string;
-    // Ku dar halkan wixii kale ee Post-kaagu leeyahay
 }

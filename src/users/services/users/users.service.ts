@@ -24,7 +24,6 @@ export class UsersService {
         private postRepository: Repository<Post>,
     ) {}
 
-    // Best Practice: Ku dar relations si xogta oo dhan ay u soo baxdo
     findUsers() {
         return this.userRepository.find({ relations: ['profile', 'posts'] });
     }
@@ -83,7 +82,7 @@ export class UsersService {
 
         const newPost = this.postRepository.create({
             ...createUserPostDetails,
-            user, // Waxay ku xidhaysaa post-ka user-ka (Foreign Key)
+            user,
         });
 
         return this.postRepository.save(newPost);
